@@ -1,0 +1,38 @@
+service: h19
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "sns:*"
+      Resource: "arn:aws:sns:us-east-1:*:*"
+
+functions:
+
+  publish:
+    handler: handler.publish
+    events:
+      - http:
+        path: publish
+        method: post
+        cors: true
+
+resources:
+  Resources:
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties: 
+        TopicName: Mentorship
+
+    Subscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: hridimoski@gmail.com
+        Protocol: email
+        TopicArn: !Ref 'SNSTopic'
+
